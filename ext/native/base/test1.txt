@@ -1,0 +1,36 @@
+	EGLint egl_major = 0;
+    EGLint egl_minor = 0;
+    EGLint num_configs = 0;
+    EGLConfig configs = {0};
+    EGLint config_attribs[] = {
+        EGL_SURFACE_TYPE,    EGL_WINDOW_BIT,
+        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+        EGL_RED_SIZE,   8,//5,  
+        EGL_GREEN_SIZE, 8,//6,
+        EGL_BLUE_SIZE,  8,//5,  
+        EGL_ALPHA_SIZE, 8,//0,
+        EGL_NONE
+    };
+/*
+    glfwWindowHint(GLFW_RED_BITS,_glContextAttrs.redBits);
+    glfwWindowHint(GLFW_GREEN_BITS,_glContextAttrs.greenBits);
+    glfwWindowHint(GLFW_BLUE_BITS,_glContextAttrs.blueBits);
+    glfwWindowHint(GLFW_ALPHA_BITS,_glContextAttrs.alphaBits);
+    glfwWindowHint(GLFW_DEPTH_BITS,_glContextAttrs.depthBits);
+    glfwWindowHint(GLFW_STENCIL_BITS,_glContextAttrs.stencilBits);
+*/	
+    EGLint window_attributes[] = { 
+        EGL_RENDER_BUFFER, EGL_BACK_BUFFER,
+        EGL_NONE
+    };
+    EGLint const context_attributes[] = {
+        EGL_CONTEXT_CLIENT_VERSION, 2,
+        EGL_NONE,
+    };
+    display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    eglInitialize(display, &egl_major, &egl_minor);
+    eglChooseConfig(display, config_attribs, &configs, 1, &num_configs);
+    surface = eglCreateWindowSurface(display, configs, 0, window_attributes);
+    context = eglCreateContext(display, configs, EGL_NO_CONTEXT, context_attributes);
+    eglMakeCurrent(display, surface, surface, context);
+	
