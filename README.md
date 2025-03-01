@@ -5,3 +5,14 @@ Try to cross compile PPSSPP 1.5.4 GLES no X11 version
 * https://github.com/hrydgard/ppsspp/blob/v1.5.4/README.md
 * https://github.com/hrydgard/ppsspp/blob/v1.5.4/history.md  
 
+## (WIP) How to build for PC xubuntu 20.04  
+* sudo apt install libsdl2-dev cmake
+* make clean && make -j8  
+* (or use cmake) cd build; make -f ppsspp_v2.mk clean; cmake ..; make -j8  
+
+## (WIP) How to build for Trimui Smart Pro
+* Modify Makefile for cross compile toolchain  
+* make MIYOO=2 clean && make MIYOO=2 -j8
+* (or use cmake) sudo apt install cmake
+* (or use cmake) cd build; make -f ppsspp_v2.mk clean; make -f ppsspp_v2.mk; make -j8  
+* (or use cmake) cd build; make -f ppsspp_v2.mk clean; . ./ppsspp_v2.sh; make -j8  
