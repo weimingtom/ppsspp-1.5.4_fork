@@ -25,7 +25,8 @@ RM := rm -rf
 
 CCFLAGS :=
 
-CCFLAGS += -g 
+#CCFLAGS += -g 
+CCFLAGS += -g0 -O0 
 CCFLAGS += -D_DEBUG
 CCFLAGS += -DNO_VULKAN 
 #ifeq ($(MIYOO),2)

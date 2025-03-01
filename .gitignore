@@ -53,11 +53,11 @@ PPSSPPControls.dat
 .gradle
 .idea
 *.iml
-build
+#build
 build.ios
 versionname.txt
 versioncode.txt
-build*/
+#build*/
 
 # Temp file used by jenkins windows build (TODO: remove)
 desc.txt
