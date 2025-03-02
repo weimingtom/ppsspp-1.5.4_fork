@@ -24,4 +24,4 @@ Try to cross compile PPSSPP 1.5.4 GLES no X11 version
 
 ## TODO  
 * Change to -O3 -g0
- 
+* Try to port to Raspberry Pi Zero 2 W and Waveshare GPM280Z2  
