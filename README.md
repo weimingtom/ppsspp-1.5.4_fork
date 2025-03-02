@@ -16,3 +16,12 @@ Try to cross compile PPSSPP 1.5.4 GLES no X11 version
 * (or use cmake) sudo apt install cmake
 * (or use cmake) cd build; make -f ppsspp_v2.mk clean; make -f ppsspp_v2.mk; make -j8  
 * (or use cmake) cd build; make -f ppsspp_v2.mk clean; . ./ppsspp_v2.sh; make -j8  
+
+## Bugs  
+* Too slow
+* imouto.iso (实妹相伴的大泉君psp移植版) not work (black screen and loop, not exited)  
+* Toheart2 psp crash  
+
+## TODO  
+* Change to -O3 -g0
+ 
