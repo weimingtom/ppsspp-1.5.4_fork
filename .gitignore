@@ -28,14 +28,14 @@ Windows/bin-release
 Windows/win-version.h
 ui_atlas.zim.png
 ui_atlas_high.zim.png
-android/assets
+#android/assets
 ext/_Output
 android/lint.xml
 PPSSPPWindows64.exe.manifest
 PPSSPPWindows.exe.manifest
 PPSSPPDebug64.exe.manifest
 PPSSPPDebug.exe.manifest
-assets/flash0
+#assets/flash0
 UWP/icph
 UWP/.vs
 
@@ -67,7 +67,7 @@ Memstick
 memstick
 Cheats
 
-/git-version.cpp
+#/git-version.cpp
 
 .pspsh.hist
 __testoutput.txt
