@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <cstdint> //for uint8_t
 #include "../Util/FileClasses.h"
 #include "SymbolData.h"
 

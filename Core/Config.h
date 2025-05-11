@@ -20,6 +20,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <cstdint> //for uint64_t, uint32_t
 
 #include "Common/CommonTypes.h"
 

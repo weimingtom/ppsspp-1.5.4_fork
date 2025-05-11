@@ -5,6 +5,7 @@
 #pragma once
 
 #include <string>
+#include <cstdint> //for uint32_t
 #include "base/NativeApp.h"
 
 enum {

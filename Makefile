@@ -101,8 +101,11 @@ CCFLAGS += -fno-strict-aliasing
 #CCFLAGS += -Wno-psabi 
 CCFLAGS += -include ./ppsspp_config.h
 
-#CCFLAGS += -std=gnu++11 
-CCFLAGS += -std=c++11 
+CCFLAGS += -std=gnu++11 
+#CCFLAGS += -std=c++11 #if in xubuntu 25.04 gcc 14, #include <thread> will be compiled failed, use -std=gnu++11 instead
+
+#__STRICT_ANSI__ if xubuntu 25.04
+#CCFLAGS += -D__STRICT_ANSI__
 
 ###CCFLAGS += -Wall 
 #CCFLAGS += -Wmaybe-uninitialized 

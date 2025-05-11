@@ -2,6 +2,7 @@
 
 #include <cstring>
 #include <vector>
+#include <cstdint> //for uint32_t
 
 #include "ext/xxhash.h"
 #include "Common/CommonFuncs.h"

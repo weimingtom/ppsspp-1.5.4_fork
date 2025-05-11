@@ -22,6 +22,7 @@
 #include <string>
 #include <vector>
 #include <time.h>
+#include <cstdint> //for uint64_t, uint32_t
 
 #include "Common.h"
 
