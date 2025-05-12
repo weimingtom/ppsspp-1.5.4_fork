@@ -504,18 +504,18 @@ namespace Reporting
 		g_Config.sReportHost = "default";
 	}
 
-	Status GetStatus()
+	Status_ GetStatus()
 	{
 		if (!serverWorking)
-			return Status::FAILING;
+			return Status_::FAILING;
 
 		for (int pos = 0; pos < PAYLOAD_BUFFER_SIZE; ++pos)
 		{
 			if (payloadBuffer[pos].type != RequestType::NONE)
-				return Status::BUSY;
+				return Status_::BUSY;
 		}
 
-		return Status::WORKING;
+		return Status_::WORKING;
 	}
 
 	int NextFreePos()

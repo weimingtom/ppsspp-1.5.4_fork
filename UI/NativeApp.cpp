@@ -972,7 +972,7 @@ void NativeDeviceRestore() {
 }
 
 bool NativeIsAtTopLevel() {
-	Screen *currentScreen = screenManager->topScreen();
+	Screen_ *currentScreen = screenManager->topScreen();
 	if (currentScreen) {
 		bool top = currentScreen->isTopLevel();
 		ILOG("Screen toplevel: %i", (int)top);

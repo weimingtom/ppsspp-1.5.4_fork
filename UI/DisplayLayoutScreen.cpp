@@ -159,7 +159,7 @@ UI::EventReturn DisplayLayoutScreen::OnZoomTypeChange(UI::EventParams &e) {
 	return UI::EVENT_DONE;
 };
 
-void DisplayLayoutScreen::dialogFinished(const Screen *dialog, DialogResult result) {
+void DisplayLayoutScreen::dialogFinished(const Screen_ *dialog, DialogResult result) {
 	RecreateViews();
 }
 

@@ -43,7 +43,7 @@ private:
 	UI::EventReturn OnAutoConfigure(UI::EventParams &params);
 	UI::EventReturn OnTestAnalogs(UI::EventParams &params);
 
-	virtual void dialogFinished(const Screen *dialog, DialogResult result) override;
+	virtual void dialogFinished(const Screen_ *dialog, DialogResult result) override;
 
 	UI::ScrollView *rightScroll_;
 	std::vector<ControlMapper *> mappers_;

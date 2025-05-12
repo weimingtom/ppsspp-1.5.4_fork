@@ -364,17 +364,17 @@ void ReportFinishScreen::update() {
 	I18NCategory *rp = GetI18NCategory("Reporting");
 
 	if (!setStatus_) {
-		Reporting::Status status = Reporting::GetStatus();
+		Reporting::Status_ status = Reporting::GetStatus();
 		switch (status) {
-		case Reporting::Status::WORKING:
+		case Reporting::Status_::WORKING:
 			resultNotice_->SetText(rp->T("FeedbackSubmitDone", "Your data has been submitted."));
 			break;
 
-		case Reporting::Status::FAILING:
+		case Reporting::Status_::FAILING:
 			resultNotice_->SetText(rp->T("FeedbackSubmitFail", "Could not submit data to server.  Try updating PPSSPP."));
 			break;
 
-		case Reporting::Status::BUSY:
+		case Reporting::Status_::BUSY:
 		default:
 			// Can't update yet.
 			break;

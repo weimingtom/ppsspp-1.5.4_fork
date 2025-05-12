@@ -30,7 +30,7 @@ public:
 	GamePauseScreen(const std::string &filename) : UIDialogScreenWithGameBackground(filename), gamePath_(filename) {}
 	virtual ~GamePauseScreen();
 
-	virtual void dialogFinished(const Screen *dialog, DialogResult dr) override;
+	virtual void dialogFinished(const Screen_ *dialog, DialogResult dr) override;
 
 protected:
 	virtual void CreateViews() override;

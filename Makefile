@@ -1,14 +1,39 @@
-# xubuntu 20.04 64bit
+# 6==waveshare gpm2804, raspberry pi cm4
+# 5==waveshare gpm280z2, raspberry pi zero2w
+# 4==raspberry pi 4b 64bit, 1.18.1
+# 3==trimui brick
+# 2==trimui smart pro
+# 1==miyoo a30
+# 0==xubuntu 20.04 64bit
 MIYOO:=0
 
-ifeq ($(MIYOO),2)
+#Build ffmpeg linux aarch64 and armhf .a static library:  
+#PATH=/home/wmt/work_trimui/aarch64-linux-gnu-7.5.0-linaro/bin:$PATH ./linux_arm64.sh
+#PATH=/home/wmt/work_a30/gcc-linaro-7.5.0-arm-linux-gnueabihf/bin:$PATH ./linux_armhf.sh
+
+ifeq ($(MIYOO),6)
+CC  := /home/wmt/work_a30/gcc-linaro-7.5.0-arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc -march=armv7-a -mtune=cortex-a72 -mfpu=neon-vfpv4 -mfloat-abi=hard
+CPP := /home/wmt/work_a30/gcc-linaro-7.5.0-arm-linux-gnueabihf/bin/arm-linux-gnueabihf-g++ -march=armv7-a -mtune=cortex-a72 -mfpu=neon-vfpv4 -mfloat-abi=hard
+AR  := /home/wmt/work_a30/gcc-linaro-7.5.0-arm-linux-gnueabihf/bin/arm-linux-gnueabihf-ar cru
+RANLIB := /home/wmt/work_a30/gcc-linaro-7.5.0-arm-linux-gnueabihf/bin/arm-linux-gnueabihf-ranlib
+else ifeq ($(MIYOO),5)
+CC  := /home/wmt/work_a30/gcc-linaro-7.5.0-arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc -mcpu=cortex-a7 -mfpu=neon -mfloat-abi=hard
+CPP := /home/wmt/work_a30/gcc-linaro-7.5.0-arm-linux-gnueabihf/bin/arm-linux-gnueabihf-g++ -mcpu=cortex-a7 -mfpu=neon -mfloat-abi=hard
+AR  := /home/wmt/work_a30/gcc-linaro-7.5.0-arm-linux-gnueabihf/bin/arm-linux-gnueabihf-ar cru
+RANLIB := /home/wmt/work_a30/gcc-linaro-7.5.0-arm-linux-gnueabihf/bin/arm-linux-gnueabihf-ranlib
+else ifeq ($(MIYOO),4)
+CC := gcc
+CPP := g++
+AR := ar cru
+RANLIB := ranlib
+else ifeq ($(MIYOO),2)
 CC  := /home/wmt/work_trimui/aarch64-linux-gnu-7.5.0-linaro/bin/aarch64-linux-gnu-gcc
 CPP := /home/wmt/work_trimui/aarch64-linux-gnu-7.5.0-linaro/bin/aarch64-linux-gnu-g++
 AR  := /home/wmt/work_trimui/aarch64-linux-gnu-7.5.0-linaro/bin/aarch64-linux-gnu-ar cru
 RANLIB := /home/wmt/work_trimui/aarch64-linux-gnu-7.5.0-linaro/bin/aarch64-linux-gnu-ranlib
 else ifeq ($(MIYOO),1)
 CC  := /home/wmt/work_a30/gcc-linaro-7.5.0-arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc -marm -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard
-CXX := /home/wmt/work_a30/gcc-linaro-7.5.0-arm-linux-gnueabihf/bin/arm-linux-gnueabihf-g++ -marm -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard
+CPP := /home/wmt/work_a30/gcc-linaro-7.5.0-arm-linux-gnueabihf/bin/arm-linux-gnueabihf-g++ -marm -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard
 AR  := /home/wmt/work_a30/gcc-linaro-7.5.0-arm-linux-gnueabihf/bin/arm-linux-gnueabihf-ar cru
 RANLIB := /home/wmt/work_a30/gcc-linaro-7.5.0-arm-linux-gnueabihf/bin/arm-linux-gnueabihf-ranlib
 else
@@ -25,31 +50,118 @@ RM := rm -rf
 
 CCFLAGS :=
 
-#CCFLAGS += -g 
-CCFLAGS += -g0 -O0 
-CCFLAGS += -D_DEBUG
-CCFLAGS += -DNO_VULKAN 
-#ifeq ($(MIYOO),2)
-#else
+ifeq ($(MIYOO),6)
+# For gpm2804
+CCFLAGS += -O3 -g0
+#CCFLAGS += -D_DEBUG
+CCFLAGS += -DNDEBUG
+
+else ifeq ($(MIYOO),5)
+# For gpm280z2
+CCFLAGS += -O3 -g0
+#CCFLAGS += -D_DEBUG
+CCFLAGS += -DNDEBUG
+
+else ifeq ($(MIYOO),4)
+# For trimui brick
+CCFLAGS += -O3 -g0
+#CCFLAGS += -D_DEBUG
+CCFLAGS += -DNDEBUG
+
+else ifeq ($(MIYOO),3)
+# For trimui brick
+CCFLAGS += -O3 -g0
+#CCFLAGS += -D_DEBUG
+CCFLAGS += -DNDEBUG
+
+else ifeq ($(MIYOO),2)
+# For trimui smart pro
+CCFLAGS += -O3 -g0
+#CCFLAGS += -D_DEBUG
+CCFLAGS += -DNDEBUG
+
+else ifeq ($(MIYOO),1)
+CCFLAGS += -O3 -g0
+#CCFLAGS += -D_DEBUG
+CCFLAGS += -DNDEBUG
+
+else ifeq ($(MIYOO),0)
+# For PC xubuntu 20.04 64bit
+CCFLAGS += -O3 -g0
+#CCFLAGS += -D_DEBUG
+CCFLAGS += -DNDEBUG
+else
+
+CCFLAGS += -O3 -g0
+#CCFLAGS += -D_DEBUG
+CCFLAGS += -DNDEBUG
+endif
+
+ifeq ($(MIYOO),6)
+else ifeq ($(MIYOO),5)
+else ifeq ($(MIYOO),4)
+else ifeq ($(MIYOO),3)
+else ifeq ($(MIYOO),2)
+else ifeq ($(MIYOO),1)
+else
+endif
+
 CCFLAGS += -DGLEW_STATIC 
 CCFLAGS += -DSDL 
-#endif
 CCFLAGS += -DSHARED_ZLIB 
+CCFLAGS += -DUSING_EGL 
 
-ifeq ($(MIYOO),2)
-CCFLAGS += -DUSING_EGL -DUSING_GLES2 -DUSING_FBDEV -DNO_SDLGL=1
+CCFLAGS += -DUSING_FBDEV 
+CCFLAGS += -DUSING_GLES2
+
+ifeq ($(MIYOO),6)
+CCFLAGS += -DNO_SDLGL=1
+#CCFLAGS += -DNO_SDLVULKAN=1 #
+###CCFLAGS += -DPPSSPP_PLATFORM_RPI=1 #see cmake/Toolchains/raspberry.armv7.cmake, only for rpi zero2w, not for rpi cm4
+#####-DPPSSPP_PLATFORM_RPI=1 see PPSSPP_PLATFORM(RPI), only for rpi3 not for rpi4
+###CCFLAGS += -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2 #only for rpi zero2w, not for rpi cm4
+#CCFLAGS += -DNO_NATIVE_FRAME_SLEEP=1 # UI/NativeApp.cpp #TODO: why refreshRate == 0 ???
+CCFLAGS += -DUSE_MOTION_AS_JOYBUTTON=1 # SDL/SDLJoystick.cpp
+CCFLAGS += -DUSE_HIDE_SDL_SHOWCURSOR=1 # SDL/SDLMain.cpp
+CCFLAGS += -DUSE_EMULATE_MENU_BUTTON=1 # SDL/SDLJoystick.cpp
+CCFLAGS += -DUSE_ROTATE_90=1 -DUSE_ROTATE_90_TWO_STATE=1 
+#glViewport, or use USE_ROTATE_270
+##SDL/SDLMain.cpp
+##Common/GPU/OpenGL/GLQueueRunner.cpp
+##GPU/Common/FramebufferManagerCommon.cpp
+##GPU/Common/PresentationCommon.cpp
+##Core/Screenshot.cpp
+##Core/System.cpp, UpdateUIState implement
+##Core/Core.cpp, UpdateScreenScale implement
+else ifeq ($(MIYOO),5)
+CCFLAGS += -DNO_SDLGL=1
+#CCFLAGS += -DNO_SDLVULKAN=1 #
+#CCFLAGS += -DPPSSPP_PLATFORM_RPI=1
+#####-DPPSSPP_PLATFORM_RPI=1 see PPSSPP_PLATFORM(RPI), only for rpi3 not for rpi4
+CCFLAGS += -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2
+#CCFLAGS += -DNO_NATIVE_FRAME_SLEEP=1 # UI/NativeApp.cpp #TODO: why refreshRate == 0 ???
+CCFLAGS += -DUSE_MOTION_AS_JOYBUTTON=1 # SDL/SDLJoystick.cpp
+CCFLAGS += -DUSE_HIDE_SDL_SHOWCURSOR=1 # SDL/SDLMain.cpp
+CCFLAGS += -DUSE_EMULATE_MENU_BUTTON=1 # SDL/SDLJoystick.cpp
+else ifeq ($(MIYOO),4)
+#####-DPPSSPP_PLATFORM_RPI=1 see PPSSPP_PLATFORM(RPI), only for rpi3 not for rpi4
+CCFLAGS += -DVK_USE_PLATFORM_XLIB_KHR #
+else ifeq ($(MIYOO),2)
+CCFLAGS += -DNO_SDLGL=1
 # -DUSING_FBDEV to skip X11 headers
 # -DUSING_GLES2 will skip gl/glew.h headers, see ext/native/gfx/gl_common.h
 #gedit ext/native/base/PCMain.cpp, EGL init 
 #EGL_BAD_ALLOC (0x3003)
 else ifeq ($(MIYOO),1)
-CCFLAGS += -DUSING_EGL -DUSING_GLES2 -DUSING_FBDEV -DNO_SDLGL=1
+CCFLAGS += -DNO_SDLGL=1
 else
-CCFLAGS += -DUSING_EGL -DUSING_GLES2 -DUSING_FBDEV 
-#-DNO_SDLGL=1 -DFORCE_CHECK_EXT=1
-
+#-DNO_SDLGL=1 
+#-DFORCE_CHECK_EXT=1
 #-DUSING_SDL_TEST
-#-DNO_SDLGL=1
+CCFLAGS += -DVK_USE_PLATFORM_XLIB_KHR #
+CCFLAGS += -DPC_NO_FULLSCREEN=1 #disable fullscreen
+CCFLAGS += -DUSE_EMULATE_MENU_BUTTON=1 # SDL/SDLJoystick.cpp
+#CCFLAGS += -DUSE_ROTATE_90=1 -DUSE_ROTATE_90_TWO_STATE=1 #PC MIYOO=0 test screen rotate
 endif
 
 CCFLAGS += -DUSE_FFMPEG=1 
@@ -80,8 +192,31 @@ CCFLAGS += -I./ext/snappy
 #CCFLAGS += -I./ext/glew 
 CCFLAGS += -I. 
 CCFLAGS += -I./Common #should put it to last
+#FIXME: raspberry pi 4b #FIXME:
+CCFLAGS += -isystem /opt/vc/include 
+CCFLAGS += -isystem /opt/vc/include/interface/vcos/pthreads 
+CCFLAGS += -isystem /opt/vc/include/interface/vmcx_host/linux
 
-ifeq ($(MIYOO),2)
+ifeq ($(MIYOO),6)
+#FIXME:????-march
+CCFLAGS += -isystem /home/wmt/work_a30/staging_dir/target/usr/include/SDL2
+CCFLAGS += -isystem ./ffmpeg/linux/armv7rpi32/include  
+###CCFLAGS += -I./include/vc/include
+CCFLAGS += -I/home/wmt/work_a30/staging_dir/target/usr/include
+else ifeq ($(MIYOO),5)
+#FIXME:????-march
+CCFLAGS += -isystem /home/wmt/work_a30/staging_dir/target/usr/include/SDL2
+CCFLAGS += -isystem ./ffmpeg/linux/armv7rpi32/include  
+CCFLAGS += -I./include/vc/include
+CCFLAGS += -I/home/wmt/work_a30/staging_dir/target/usr/include
+else ifeq ($(MIYOO),4)
+CCFLAGS += -isystem /usr/include/SDL2
+CCFLAGS += -isystem ./ffmpeg/linux/aarch64/include
+#FIXME:raspberry pi
+CCFLAGS += -march=armv8-a+crc 
+CCFLAGS += -mtune=cortex-a72 
+CCFLAGS += -funsafe-math-optimizations
+else ifeq ($(MIYOO),2)
 CCFLAGS += -isystem /home/wmt/work_trimui/usr/include/SDL2
 CCFLAGS += -isystem ./ffmpeg/linux/aarch64/include  
 CCFLAGS += -I/home/wmt/work_trimui/usr/include
@@ -103,7 +238,6 @@ CCFLAGS += -include ./ppsspp_config.h
 
 CCFLAGS += -std=gnu++11 
 #CCFLAGS += -std=c++11 #if in xubuntu 25.04 gcc 14, #include <thread> will be compiled failed, use -std=gnu++11 instead
-
 #__STRICT_ANSI__ if xubuntu 25.04
 #CCFLAGS += -D__STRICT_ANSI__
 
@@ -135,7 +269,34 @@ LDFLAGS += -lpthread
 LDFLAGS += -lrt 
 LDFLAGS += -ldl 
 
-ifeq ($(MIYOO),2)
+ifeq ($(MIYOO),6)
+LDFLAGS += -lSDL2 -lz -lGLESv2 -lEGL -L/home/wmt/work_a30/staging_dir/target/usr/lib
+LDFLAGS += ./ffmpeg/linux/armv7rpi32/lib/libavformat.a 
+LDFLAGS += ./ffmpeg/linux/armv7rpi32/lib/libavcodec.a 
+LDFLAGS += ./ffmpeg/linux/armv7rpi32/lib/libswresample.a 
+LDFLAGS += ./ffmpeg/linux/armv7rpi32/lib/libswscale.a 
+LDFLAGS += ./ffmpeg/linux/armv7rpi32/lib/libavutil.a
+else ifeq ($(MIYOO),5)
+LDFLAGS += -lSDL2 -lz -lbrcmGLESv2 -lbcm_host -lbrcmEGL -lvchiq_arm -lvcos -L./include/vc/lib -L/home/wmt/work_a30/staging_dir/target/usr/lib
+LDFLAGS += ./ffmpeg/linux/armv7rpi32/lib/libavformat.a 
+LDFLAGS += ./ffmpeg/linux/armv7rpi32/lib/libavcodec.a 
+LDFLAGS += ./ffmpeg/linux/armv7rpi32/lib/libswresample.a 
+LDFLAGS += ./ffmpeg/linux/armv7rpi32/lib/libswscale.a 
+LDFLAGS += ./ffmpeg/linux/armv7rpi32/lib/libavutil.a
+else ifeq ($(MIYOO),4)
+#for raspberry pi 4b
+LDFLAGS += -L/opt/vc/lib -lGLESv2 -lEGL
+LDFLAGS += /usr/lib/aarch64-linux-gnu/libSM.so 
+LDFLAGS += /usr/lib/aarch64-linux-gnu/libICE.so 
+LDFLAGS += /usr/lib/aarch64-linux-gnu/libX11.so 
+LDFLAGS += /usr/lib/aarch64-linux-gnu/libXext.so 
+LDFLAGS += /usr/lib/aarch64-linux-gnu/libz.so
+LDFLAGS += ./ffmpeg/linux/aarch64/lib/libavformat.a 
+LDFLAGS += ./ffmpeg/linux/aarch64/lib/libavcodec.a 
+LDFLAGS += ./ffmpeg/linux/aarch64/lib/libswresample.a 
+LDFLAGS += ./ffmpeg/linux/aarch64/lib/libswscale.a 
+LDFLAGS += ./ffmpeg/linux/aarch64/lib/libavutil.a
+else ifeq ($(MIYOO),2)
 LDFLAGS += /home/wmt/work_trimui/usr/lib/libSDL2.a 
 LDFLAGS += /home/wmt/work_trimui/usr/lib/libz.a
 LDFLAGS += /home/wmt/work_trimui/usr/lib/libEGL.so
@@ -148,10 +309,12 @@ LDFLAGS += ./ffmpeg/linux/aarch64/lib/libswresample.a
 LDFLAGS += ./ffmpeg/linux/aarch64/lib/libswscale.a 
 LDFLAGS += ./ffmpeg/linux/aarch64/lib/libavutil.a
 else ifeq ($(MIYOO),1)
-LDFLAGS += /home/wmt/work_a30/staging_dir/target/usr/lib/libSDL2.a 
-LDFLAGS += /home/wmt/work_a30/staging_dir/target/usr/lib/libz.a
-LDFLAGS += /home/wmt/work_a30/staging_dir/target/usr/lib/libEGL.so 
-LDFLAGS += /home/wmt/work_a30/staging_dir/target/usr/lib/libGLESv2.so 
+#LDFLAGS += /home/wmt/work_a30/staging_dir/target/usr/lib/libSDL2.a 
+#LDFLAGS += /home/wmt/work_a30/staging_dir/target/usr/lib/libz.a
+#LDFLAGS += /home/wmt/work_a30/staging_dir/target/usr/lib/libEGL.so 
+#LDFLAGS += /home/wmt/work_a30/staging_dir/target/usr/lib/libGLESv2.so 
+#for miyoo a30
+LDFLAGS += -lSDL2 -lz -lGLESv2 -lEGL -L/home/wmt/work_a30/staging_dir/target/usr/lib
 LDFLAGS += ./ffmpeg/linux/armv7/lib/libavformat.a 
 LDFLAGS += ./ffmpeg/linux/armv7/lib/libavcodec.a 
 LDFLAGS += ./ffmpeg/linux/armv7/lib/libswresample.a 
@@ -947,4 +1110,7 @@ test:
 debug:
 	gdb ./PPSSPPSDL
 
+install5:
+	cp PPSSPPSDL /media/wmt/retropie/home/pi/pi/work_ppsspp/ppsspp_rpi32_1181/.
+	cp assets/gamecontrollerdb.txt /media/wmt/retropie/home/pi/pi/work_ppsspp/ppsspp_rpi32_1181/assets/.
 

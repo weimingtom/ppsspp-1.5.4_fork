@@ -283,7 +283,7 @@ UI::EventReturn ControlMappingScreen::OnTestAnalogs(UI::EventParams &params) {
 	return UI::EVENT_DONE;
 }
 
-void ControlMappingScreen::dialogFinished(const Screen *dialog, DialogResult result) {
+void ControlMappingScreen::dialogFinished(const Screen_ *dialog, DialogResult result) {
 	if (result == DR_OK && dialog->tag() == "listpopup") {
 		ListPopupScreen *popup = (ListPopupScreen *)dialog;
 		KeyMap::AutoConfForPad(popup->GetChoiceString());

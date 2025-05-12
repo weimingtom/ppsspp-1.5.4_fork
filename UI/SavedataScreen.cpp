@@ -391,7 +391,7 @@ UI::EventReturn SavedataScreen::OnSavedataButtonClick(UI::EventParams &e) {
 	return UI::EVENT_DONE;
 }
 
-void SavedataScreen::dialogFinished(const Screen *dialog, DialogResult result) {
+void SavedataScreen::dialogFinished(const Screen_ *dialog, DialogResult result) {
 	if (result == DR_NO) {
 		RecreateViews();
 	}

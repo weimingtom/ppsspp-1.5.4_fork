@@ -3,8 +3,11 @@
 #include "Common/FileUtil.h"
 #include "file/vfs.h"
 
+#include "base/logging.h" //for ILOG
+
 #include <iostream>
 #include <string>
+#include <thread> //for std::thread
 
 using namespace std;
 
@@ -99,6 +102,7 @@ void SDLJoystick::registerEventHandler() {
 }
 
 keycode_t SDLJoystick::getKeycodeForButton(SDL_GameControllerButton button) {
+ILOG("<<<<<<<<<<<<getKeycodeForButton: %d, \n", button);
 	switch (button) {
 	case SDL_CONTROLLER_BUTTON_DPAD_UP:
 		return NKCODE_DPAD_UP;
@@ -136,9 +140,33 @@ keycode_t SDLJoystick::getKeycodeForButton(SDL_GameControllerButton button) {
 	}
 }
 
+static int start_state = 0;
+static int select_state = 0;
+
 void SDLJoystick::ProcessInput(SDL_Event &event){
 	switch (event.type) {
 	case SDL_CONTROLLERBUTTONDOWN:
+ILOG("<<<<<<<<<<<<<<<SDL_CONTROLLERBUTTONDOWN\n");
+#if USE_EMULATE_MENU_BUTTON
+/*
+For GPM280Z2:
+A==0
+B==1
+X==2
+Y==3
+SELECT==4
+START==6
+L1==9
+R1==10
+*/
+if (event.cbutton.button == 4) {
+	start_state = 1;
+ILOG("<<<<<<<<<<START DOWN\n");
+} else if (event.cbutton.button == 6) {
+	select_state = 1;
+ILOG("<<<<<<<<<<SELECT DOWN\n");
+}
+#endif
 		if (event.cbutton.state == SDL_PRESSED) {
 			auto code = getKeycodeForButton((SDL_GameControllerButton)event.cbutton.button);
 			if (code != NKCODE_UNKNOWN) {
@@ -151,6 +179,49 @@ void SDLJoystick::ProcessInput(SDL_Event &event){
 		}
 		break;
 	case SDL_CONTROLLERBUTTONUP:
+ILOG("<<<<<<<<<<<<<<<SDL_CONTROLLERBUTTONUP\n");
+#if USE_EMULATE_MENU_BUTTON
+/*
+For GPM280Z2:
+A==0
+B==1
+X==2
+Y==3
+SELECT==4
+START==6
+L1==9
+R1==10
+*/
+if (event.cbutton.button == 4) {
+	start_state = 0;
+ILOG("<<<<<<<<<<START UP, %d, %d\n", start_state, select_state);
+} else if (event.cbutton.button == 6) {
+	select_state = 0;
+ILOG("<<<<<<<<<<SELECT UP, %d, %d\n", start_state, select_state);
+}
+
+if ((start_state == 1 && select_state == 0) || 
+    (start_state == 0 && select_state == 1)) {
+	//use START+SELECT to emulate ESC key, symcode == 27, keycode == 111
+ILOG("<<<<<<<<<<START+SELECT\n");
+fflush(stdout);
+	std::thread t([this]() {
+		KeyInput key;
+		key.flags = KEY_DOWN;
+//(InputKeyCode)SDLK_ESCAPE; //
+		key.keyCode = (keycode_t)this->getKeycodeForButton((SDL_GameControllerButton)5); //or joystick menu button 5
+		key.deviceId = DEVICE_ID_KEYBOARD;
+		NativeKey(key);
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));		
+		key.flags = KEY_UP;
+//(InputKeyCode)SDLK_ESCAPE; //
+		key.keyCode = (keycode_t)this->getKeycodeForButton((SDL_GameControllerButton)5); //or joystick menu button 5
+		key.deviceId = DEVICE_ID_KEYBOARD;
+		NativeKey(key);
+	});
+	t.detach();
+}
+#endif
 		if (event.cbutton.state == SDL_RELEASED) {
 			auto code = getKeycodeForButton((SDL_GameControllerButton)event.cbutton.button);
 			if (code != NKCODE_UNKNOWN) {
@@ -169,11 +240,46 @@ void SDLJoystick::ProcessInput(SDL_Event &event){
 		axis.value = 1.2 * event.caxis.value * g_Config.fXInputAnalogSensitivity / 32767.0f;
 		if (axis.value > 1.0f) axis.value = 1.0f;
 		if (axis.value < -1.0f) axis.value = -1.0f;
+ILOG("<<<<<<<<<<<<<<<SDL_CONTROLLERAXISMOTION %d, %d, %d, %f\n", event.caxis.which, event.caxis.axis, event.caxis.value, axis.value);
+#if USE_MOTION_AS_JOYBUTTON
+	int emulate_key = -1;
+	if (event.caxis.axis == 0 && value == -1) {
+		//left
+		emulate_key = 21;
+	} else if (event.caxis.axis == 0 && value == 1) {
+		//right
+		emulate_key = 22;
+	} else if (event.caxis.axis == 1 && value == -1) {
+		//up
+		emulate_key = 19;
+	} else if (event.caxis.axis == 1 && value == 1) {
+		//down
+		emulate_key = 20;
+	}
+	if (emulate_key > 0)
+	{
+		std::thread t([emulate_key]() {
+			KeyInput key;
+			key.flags = KEY_DOWN;
+			key.keyCode = (InputKeyCode)emulate_key;
+			key.deviceId = DEVICE_ID_KEYBOARD;
+			NativeKey(key);
+			std::this_thread::sleep_for(std::chrono::milliseconds(50));		
+			key.flags = KEY_UP;
+			key.keyCode = (InputKeyCode)emulate_key;
+			key.deviceId = DEVICE_ID_KEYBOARD;
+			NativeKey(key);
+		});
+		t.detach();
+	}
+#else
 		axis.deviceId = DEVICE_ID_PAD_0 + getDeviceIndex(event.caxis.which);
 		axis.flags = 0;
 		NativeAxis(axis);
+#endif
 		break;
 	case SDL_CONTROLLERDEVICEREMOVED:
+ILOG("<<<<<<<<<<<<<<<SDL_CONTROLLERDEVICEREMOVED\n");
 		// for removal events, "which" is the instance ID for SDL_CONTROLLERDEVICEREMOVED		
 		for (auto it = controllers.begin(); it != controllers.end(); ++it) {
 			if (SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(*it)) == event.cdevice.which) {
@@ -184,6 +290,7 @@ void SDLJoystick::ProcessInput(SDL_Event &event){
 		}
 		break;
 	case SDL_CONTROLLERDEVICEADDED:
+ILOG("<<<<<<<<<<<<<<<SDL_CONTROLLERDEVICEADDED\n");
 		// for add events, "which" is the device index!
 		int prevNumControllers = controllers.size();
 		setUpController(event.cdevice.which);

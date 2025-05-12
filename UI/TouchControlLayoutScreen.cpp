@@ -299,7 +299,7 @@ UI::EventReturn TouchControlLayoutScreen::OnReset(UI::EventParams &e) {
 	return UI::EVENT_DONE;
 };
 
-void TouchControlLayoutScreen::dialogFinished(const Screen *dialog, DialogResult result) {
+void TouchControlLayoutScreen::dialogFinished(const Screen_ *dialog, DialogResult result) {
 	RecreateViews();
 }
 

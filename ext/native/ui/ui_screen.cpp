@@ -13,7 +13,7 @@
 static const bool ClickDebug = false;
 
 UIScreen::UIScreen()
-	: Screen(), root_(nullptr), translation_(0.0f), scale_(1.0f), recreateViews_(true), hatDown_(0) {
+	: Screen_(), root_(nullptr), translation_(0.0f), scale_(1.0f), recreateViews_(true), hatDown_(0) {
 }
 
 UIScreen::~UIScreen() {
@@ -163,7 +163,7 @@ bool UIDialogScreen::key(const KeyInput &key) {
 }
 
 void UIDialogScreen::sendMessage(const char *msg, const char *value) {
-	Screen *screen = screenManager()->dialogParent(this);
+	Screen_ *screen = screenManager()->dialogParent(this);
 	if (screen) {
 		screen->sendMessage(msg, value);
 	}

@@ -34,7 +34,7 @@ public:
 	DevMenu(I18NCategory *i18n) : PopupScreen(i18n->T("Dev Tools")) {}
 
 	void CreatePopupContents(UI::ViewGroup *parent) override;
-	void dialogFinished(const Screen *dialog, DialogResult result) override;
+	void dialogFinished(const Screen_ *dialog, DialogResult result) override;
 
 protected:
 	UI::EventReturn OnLogView(UI::EventParams &e);

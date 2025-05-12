@@ -84,7 +84,7 @@ protected:
 	void DrawBackground(UIContext &dc) override;
 	void update() override;
 	void sendMessage(const char *message, const char *value) override;
-	void dialogFinished(const Screen *dialog, DialogResult result) override;
+	void dialogFinished(const Screen_ *dialog, DialogResult result) override;
 
 	bool UseVerticalLayout() const;
 	bool DrawBackgroundFor(UIContext &dc, const std::string &gamePath, float progress);

@@ -482,9 +482,28 @@ SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengles2");
 	Uint32 mode;
 #ifdef USING_GLES2
 #if NO_SDLGL
+
+#if !PC_NO_FULLSCREEN //added
 	mode = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN;
 #else
+	mode = SDL_WINDOW_OPENGL;
+//not run here, pc, skip, added
+mode &= ~SDL_WINDOW_FULLSCREEN_DESKTOP;
+mode &= ~SDL_WINDOW_FULLSCREEN;
+//mode |= SDL_WINDOW_RESIZABLE;
+#endif
+
+#else
+
+#if !PC_NO_FULLSCREEN //added
 	mode = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN; //mode = SDL_WINDOW_OPENGL;
+#else
+	mode = SDL_WINDOW_OPENGL;
+mode &= ~SDL_WINDOW_FULLSCREEN_DESKTOP;
+mode &= ~SDL_WINDOW_FULLSCREEN;
+//mode |= SDL_WINDOW_RESIZABLE;
+#endif
+
 #endif
 #if NO_SDLGL
     //skip
@@ -577,6 +596,7 @@ SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengles2");
 	if (set_yres > 0) {
 		pixel_yres = set_yres;
 	}
+
 	float dpi_scale = 1.0f;
 	if (set_dpi > 0) {
 		dpi_scale = set_dpi;
@@ -615,6 +635,21 @@ SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengles2");
 	if (g_Config.bFullScreen)
 		mode |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 
+#if PC_NO_FULLSCREEN //added
+	//don't use this://set_dpi = 1.0f;
+	pixel_xres = 480;
+	pixel_yres = 272;
+mode &= ~SDL_WINDOW_FULLSCREEN_DESKTOP;
+mode &= ~SDL_WINDOW_FULLSCREEN;
+//mode |= SDL_WINDOW_RESIZABLE;
+#if 1
+#if USE_ROTATE_90 || USE_ROTATE_270
+	std::swap(pixel_xres, pixel_yres);
+#endif
+#endif
+
+#endif
+
 	g_Screen = SDL_CreateWindow(app_name_nice.c_str(), SDL_WINDOWPOS_UNDEFINED_DISPLAY(getDisplayNumber()),\
 					SDL_WINDOWPOS_UNDEFINED, pixel_xres, pixel_yres, mode);
 
@@ -647,7 +682,7 @@ SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengles2");
 #if !NO_SDLGL
 	SDL_SetWindowTitle(g_Screen, (app_name_nice + " " + PPSSPP_GIT_VERSION).c_str());
 
-#ifdef MOBILE_DEVICE
+#if defined(MOBILE_DEVICE) || USE_HIDE_SDL_SHOWCURSOR
 	SDL_ShowCursor(SDL_DISABLE);
 #endif
 #endif
@@ -740,11 +775,12 @@ SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengles2");
 				g_QuitRequested = 1;
 				break;
 
-#if !defined(MOBILE_DEVICE)
+#if !defined(MOBILE_DEVICE) && !USE_HIDE_SDL_SHOWCURSOR
 			case SDL_WINDOWEVENT:
 				switch (event.window.event) {
 				case SDL_WINDOWEVENT_RESIZED:
 				{
+ILOG("<<<<<<<<<<<<SDL_WINDOWEVENT_RESIZED, %d, %d, %f\n", event.window.data1, event.window.data2, dpi_scale);
 					Uint32 window_flags = SDL_GetWindowFlags(g_Screen);
 					bool fullscreen = (window_flags & SDL_WINDOW_FULLSCREEN);
 
@@ -783,11 +819,51 @@ SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengles2");
 					}
 					key.keyCode = mapped->second;
 					key.deviceId = DEVICE_ID_KEYBOARD;
+ILOG("<<<<<<<<<<<<SDL_KEYDOWN, %d, %d\n", event.key.keysym.sym, key.keyCode);
+#if 0
+#if USE_ROTATE_90 || USE_ROTATE_270
+if (key.keyCode == 44) {
+//Press 'P'
+if (1) {
+	g_display.rotation = DisplayRotation::ROTATE_0;
+	g_display.rot_matrix.setIdentity();
+UpdateScreenScale(272, 480);
+} else {
+	g_display.rotation = DisplayRotation::ROTATE_90;
+	g_display.rot_matrix.setRotationZ90();
+UpdateScreenScale(272, 272);
+}
+
+}
+#endif
+#endif					
 					NativeKey(key);
+
+#if 0
+//only for test
+//P:44->Down:20
+if (key.keyCode == 44) { //Press Key P to emulate press key Down Arrow
+	std::thread t([]() {
+		KeyInput key;
+		key.flags = KEY_DOWN;
+		key.keyCode = (InputKeyCode)20;
+		key.deviceId = DEVICE_ID_KEYBOARD;
+		NativeKey(key);
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));		
+		key.flags = KEY_UP;
+		key.keyCode = (InputKeyCode)20;
+		key.deviceId = DEVICE_ID_KEYBOARD;
+		NativeKey(key);
+	});
+	t.detach();
+}
+#endif					
+					
 					break;
 				}
 			case SDL_KEYUP:
 				{
+ILOG("<<<<<<<<<<<<SDL_KEYUP, %d\n", event.key.keysym.sym);				
 					if (event.key.repeat > 0) { break;}
 					int k = event.key.keysym.sym;
 					KeyInput key;
@@ -901,7 +977,7 @@ SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengles2");
 		UpdateRunLoop();
 		if (g_QuitRequested)
 			break;
-#if !defined(MOBILE_DEVICE)
+#if !defined(MOBILE_DEVICE) && !USE_HIDE_SDL_SHOWCURSOR
 		if (lastUIState != GetUIState()) {
 			lastUIState = GetUIState();
 			if (lastUIState == UISTATE_INGAME && g_Config.bFullScreen && !g_Config.bShowTouchControls)

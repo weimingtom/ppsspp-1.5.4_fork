@@ -40,10 +40,10 @@ namespace Draw {
 	class DrawContext;
 }
 
-class Screen {
+class Screen_ {
 public:
-	Screen() : screenManager_(nullptr) { }
-	virtual ~Screen() {
+	Screen_() : screenManager_(nullptr) { }
+	virtual ~Screen_() {
 		screenManager_ = nullptr;
 	}
 
@@ -55,7 +55,7 @@ public:
 	virtual void deviceLost() {}
 	virtual void deviceRestore() {}
 	virtual void resized() {}
-	virtual void dialogFinished(const Screen *dialog, DialogResult result) {}
+	virtual void dialogFinished(const Screen_ *dialog, DialogResult result) {}
 	virtual bool touch(const TouchInput &touch) { return false;  }
 	virtual bool key(const KeyInput &key) { return false; }
 	virtual bool axis(const AxisInput &touch) { return false; }
@@ -79,7 +79,7 @@ public:
 
 private:
 	ScreenManager *screenManager_;
-	DISALLOW_COPY_AND_ASSIGN(Screen);
+	DISALLOW_COPY_AND_ASSIGN(Screen_);
 };
 
 class Transition {
@@ -99,7 +99,7 @@ public:
 	ScreenManager();
 	virtual ~ScreenManager();
 
-	void switchScreen(Screen *screen);
+	void switchScreen(Screen_ *screen);
 	void update();
 
 	void setUIContext(UIContext *context) { uiContext_ = context; }
@@ -120,14 +120,14 @@ public:
 	void shutdown();
 
 	// Push a dialog box in front. Currently 1-level only.
-	void push(Screen *screen, int layerFlags = 0);
+	void push(Screen_ *screen, int layerFlags = 0);
 
 	// Recreate all views
 	void RecreateAllViews();
 
 	// Pops the dialog away.
-	void finishDialog(Screen *dialog, DialogResult result = DR_OK);
-	Screen *dialogParent(const Screen *dialog) const;
+	void finishDialog(Screen_ *dialog, DialogResult result = DR_OK);
+	Screen_ *dialogParent(const Screen_ *dialog) const;
 
 	// Instant touch, separate from the update() mechanism.
 	bool touch(const TouchInput &touch);
@@ -137,7 +137,7 @@ public:
 	// Generic facility for gross hacks :P
 	void sendMessage(const char *msg, const char *value);
 
-	Screen *topScreen() const;
+	Screen_ *topScreen() const;
 
 	std::recursive_mutex inputLock_;
 
@@ -146,18 +146,18 @@ private:
 	void switchToNext();
 	void processFinishDialog();
 
-	Screen *nextScreen_;
+	Screen_ *nextScreen_;
 	UIContext *uiContext_;
 	Draw::DrawContext *thin3DContext_;
 
 	PostRenderCallback postRenderCb_ = nullptr;
 	void *postRenderUserdata_ = nullptr;
 
-	const Screen *dialogFinished_;
+	const Screen_ *dialogFinished_;
 	DialogResult dialogResult_;
 
 	struct Layer {
-		Screen *screen;
+		Screen_ *screen;
 		int flags;  // From LAYER_ enum above
 		UI::View *focusedView;  // TODO: save focus here. Going for quick solution now to reset focus.
 	};

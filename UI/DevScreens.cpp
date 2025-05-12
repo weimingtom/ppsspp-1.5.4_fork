@@ -138,7 +138,7 @@ UI::EventReturn DevMenu::OnDumpFrame(UI::EventParams &e) {
 	return UI::EVENT_DONE;
 }
 
-void DevMenu::dialogFinished(const Screen *dialog, DialogResult result) {
+void DevMenu::dialogFinished(const Screen_ *dialog, DialogResult result) {
 	UpdateUIState(UISTATE_INGAME);
 	// Close when a subscreen got closed.
 	// TODO: a bug in screenmanager causes this not to work here.

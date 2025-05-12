@@ -10,7 +10,7 @@ namespace Draw {
 	class DrawContext;
 }
 
-class UIScreen : public Screen {
+class UIScreen : public Screen_ {
 public:
 	UIScreen();
 	~UIScreen();

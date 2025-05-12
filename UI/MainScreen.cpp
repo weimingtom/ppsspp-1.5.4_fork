@@ -1153,7 +1153,7 @@ UI::EventReturn MainScreen::OnExit(UI::EventParams &e) {
 	return UI::EVENT_DONE;
 }
 
-void MainScreen::dialogFinished(const Screen *dialog, DialogResult result) {
+void MainScreen::dialogFinished(const Screen_ *dialog, DialogResult result) {
 	if (dialog->tag() == "store") {
 		backFromStore_ = true;
 		RecreateViews();

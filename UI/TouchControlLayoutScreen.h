@@ -32,7 +32,7 @@ public:
 
 	virtual void CreateViews() override;
 	virtual bool touch(const TouchInput &touch) override;
-	virtual void dialogFinished(const Screen *dialog, DialogResult result) override;
+	virtual void dialogFinished(const Screen_ *dialog, DialogResult result) override;
 	virtual void onFinish(DialogResult reason) override;
 
 protected:
