@@ -5,6 +5,9 @@ Try to cross compile PPSSPP 1.5.4 GLES no X11 version
 * https://github.com/hrydgard/ppsspp/blob/v1.5.4/README.md
 * https://github.com/hrydgard/ppsspp/blob/v1.5.4/history.md  
 
+## Original code compare
+* ppsspp_v1.5.4_min.tar.gz  
+
 ## (WIP) How to build for PC xubuntu 20.04  
 * sudo apt install libsdl2-dev cmake
 * make clean && make -j8  
