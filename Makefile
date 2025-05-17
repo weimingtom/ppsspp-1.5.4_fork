@@ -1,6 +1,6 @@
 # 6==waveshare gpm2804, raspberry pi cm4
 # 5==waveshare gpm280z2, raspberry pi zero2w
-# 4==raspberry pi 4b 64bit, 1.18.1
+# 4==raspberry pi 4b 64bit aarch64, 1.5,4, sudo apt install libsdl2-dev libsm-dev libice-dev libx11-dev libxext-dev zlib1g-dev
 # 3==trimui brick
 # 2==trimui smart pro
 # 1==miyoo a30
@@ -10,6 +10,9 @@ MIYOO:=0
 #Build ffmpeg linux aarch64 and armhf .a static library:  
 #PATH=/home/wmt/work_trimui/aarch64-linux-gnu-7.5.0-linaro/bin:$PATH ./linux_arm64.sh
 #PATH=/home/wmt/work_a30/gcc-linaro-7.5.0-arm-linux-gnueabihf/bin:$PATH ./linux_armhf.sh
+
+#Build ffmpeg linux rpi4 aarch64 .a static library:  
+#./linux_rpi64.sh
 
 ifeq ($(MIYOO),6)
 CC  := /home/wmt/work_a30/gcc-linaro-7.5.0-arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc -march=armv7-a -mtune=cortex-a72 -mfpu=neon-vfpv4 -mfloat-abi=hard
@@ -211,7 +214,7 @@ CCFLAGS += -I./include/vc/include
 CCFLAGS += -I/home/wmt/work_a30/staging_dir/target/usr/include
 else ifeq ($(MIYOO),4)
 CCFLAGS += -isystem /usr/include/SDL2
-CCFLAGS += -isystem ./ffmpeg/linux/aarch64/include
+CCFLAGS += -isystem ./ffmpeg/linux/aarch64rpi64/include
 #FIXME:raspberry pi
 CCFLAGS += -march=armv8-a+crc 
 CCFLAGS += -mtune=cortex-a72 
@@ -286,16 +289,17 @@ LDFLAGS += ./ffmpeg/linux/armv7rpi32/lib/libavutil.a
 else ifeq ($(MIYOO),4)
 #for raspberry pi 4b
 LDFLAGS += -L/opt/vc/lib -lGLESv2 -lEGL
-LDFLAGS += /usr/lib/aarch64-linux-gnu/libSM.so 
-LDFLAGS += /usr/lib/aarch64-linux-gnu/libICE.so 
-LDFLAGS += /usr/lib/aarch64-linux-gnu/libX11.so 
-LDFLAGS += /usr/lib/aarch64-linux-gnu/libXext.so 
-LDFLAGS += /usr/lib/aarch64-linux-gnu/libz.so
-LDFLAGS += ./ffmpeg/linux/aarch64/lib/libavformat.a 
-LDFLAGS += ./ffmpeg/linux/aarch64/lib/libavcodec.a 
-LDFLAGS += ./ffmpeg/linux/aarch64/lib/libswresample.a 
-LDFLAGS += ./ffmpeg/linux/aarch64/lib/libswscale.a 
-LDFLAGS += ./ffmpeg/linux/aarch64/lib/libavutil.a
+LDFLAGS += -lSDL2 
+LDFLAGS += /usr/lib/arm-linux-gnueabihf/libSM.so 
+LDFLAGS += /usr/lib/arm-linux-gnueabihf/libICE.so 
+LDFLAGS += /usr/lib/arm-linux-gnueabihf/libX11.so 
+LDFLAGS += /usr/lib/arm-linux-gnueabihf/libXext.so 
+LDFLAGS += /usr/lib/arm-linux-gnueabihf/libz.so
+LDFLAGS += ./ffmpeg/linux/aarch64rpi64/lib/libavformat.a 
+LDFLAGS += ./ffmpeg/linux/aarch64rpi64/lib/libavcodec.a 
+LDFLAGS += ./ffmpeg/linux/aarch64rpi64/lib/libswresample.a 
+LDFLAGS += ./ffmpeg/linux/aarch64rpi64/lib/libswscale.a 
+LDFLAGS += ./ffmpeg/linux/aarch64rpi64/lib/libavutil.a
 else ifeq ($(MIYOO),2)
 LDFLAGS += /home/wmt/work_trimui/usr/lib/libSDL2.a 
 LDFLAGS += /home/wmt/work_trimui/usr/lib/libz.a

@@ -19,6 +19,7 @@
 #include <map>
 #include <algorithm>
 #include <memory>
+#include <mutex> //for std::mutex
 
 #include "Common/Swap.h"
 #include "Core/HLE/sceMpeg.h"
@@ -822,6 +823,7 @@ class H264Frames{
 public:
 	int size;
 	u8* stream;
+std::mutex mutex;
 	
 	H264Frames() :size(0), stream(NULL){};
 	
@@ -837,11 +839,16 @@ public:
 	};
 
 	~H264Frames(){
+mutex.lock();
 		size = 0;
-		if (stream){
+		if (stream){ // && size > 0
+//printf("<<<<<delete[]1 stream== %X, this==%X\n", stream, this);
 			delete[] stream;
 			stream = NULL;
+//FIXME:or printf, or usleep(100), can solve imouto.iso crash problem
+//printf("<<<<<delete[]1 after stream== %X, this==%X\n", stream, this);
 		}
+mutex.unlock();
 	};
 	
 	void add(H264Frames *p){
@@ -849,16 +856,22 @@ public:
 	};
 
 	void add(u8* str, int sz){
+mutex.lock();
 		int newsize = size + sz;
 		u8* newstream = new u8[newsize];
 		// join two streams
 		memcpy(newstream, stream, size);
 		memcpy(newstream + size, str, sz);
 		// delete old stream
-		delete[] stream;
+		if (stream) {
+//printf("<<<<<delete[]2 stream== %X\n", stream);		
+			delete[] stream;
+			stream = NULL;
+		}
 		// replace with new stream
 		stream = newstream;
 		size = newsize;
+mutex.unlock();		
 	};
 
 	void remove(int pos){
@@ -870,6 +883,7 @@ public:
 			// we remove all
 			size = 0;
 			if (stream){
+//printf("<<<<<delete[]3 stream== %X\n", stream);					
 				delete[] stream;
 				stream = NULL;
 			}
@@ -879,6 +893,7 @@ public:
 			size -= pos;
 			u8* str = new u8[size];
 			memcpy(str, stream + pos, size);
+//printf("<<<<<delete[]4 stream== %X\n", stream);				
 			delete[] stream;
 			stream = str;
 		}
@@ -891,7 +906,11 @@ public:
 		memcpy(str, stream, size);
 		memset(str + size, 0, FF_INPUT_BUFFER_PADDING_SIZE);
 		size += FF_INPUT_BUFFER_PADDING_SIZE;
-		delete[] stream;
+		if (stream) {
+//printf("<<<<<delete[]5 stream== %X\n", stream);
+			delete[] stream;
+			stream = NULL;
+		}
 		stream = str;
 	}
 };
